@@ -22,8 +22,12 @@ HEADERS += \
 FORMS += \
         mainwindow.ui
 
-include($$(OPENCV_DIR)\opencv.pri)
 
 RESOURCES +=
 
 DISTFILES +=
+
+
+win32: LIBS += -L$$(OPENCV_DIR)/x64/vc15/lib/ -lopencv_world410
+win32: LIBS += -L$$(OPENCV_DIR)/x64/vc15/lib/ -lopencv_world410d
+INCLUDEPATH += $$PWD/../../../../local/opencv/include
