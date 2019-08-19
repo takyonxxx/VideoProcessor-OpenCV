@@ -10,20 +10,17 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    capturethread.cpp \
-    kalmanfilter.cpp
+        capturethread.cpp \
+        kalmanfilter.cpp
 
 HEADERS += \
         mainwindow.h \
-    capturethread.h \
-    functions.h \
-    kalmanfilter.h
+        capturethread.h \
+        functions.h \
+        kalmanfilter.h
 
 FORMS += \
         mainwindow.ui
 
-include($$(OPENCV_DIR)\opencv.pri)
-
-RESOURCES +=
-
-DISTFILES +=
+win32: LIBS += -L$$(OPENCV_DIR)/build/x64/vc15/lib/ -lopencv_world411
+INCLUDEPATH += $$(OPENCV_DIR)/build/include
