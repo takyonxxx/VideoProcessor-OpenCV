@@ -1,3 +1,5 @@
 # VideoProcessor
- Video Processor with opencv opencv-4.1.0-vc14_vc15
+ Video Processor with opencv </br>
+ used:</br>
+ https://github.com/huihut/OpenCV-MinGW-Build
  Try to calculate Glucose from finger
