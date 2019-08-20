@@ -32,7 +32,7 @@ protected:
 private slots:
     void on_startBtn_pressed();
     void on_openBtn_clicked();
-    void processFrame(cv::Mat);
+    void processFrame(cv::Mat&);
     void setCurrentFrame(int value);
     void setTotalFrame(int value);
 

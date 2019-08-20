@@ -2,21 +2,18 @@
 
 using namespace std;
 
+Q_DECLARE_METATYPE(cv::Mat);
+
 CaptureThread::CaptureThread(QObject* parent, std::string videoFile)
     :QThread(parent)
 {
-    qRegisterMetaType<cv::Mat>();
+    qRegisterMetaType<cv::Mat>("cv::Mat&");
+
     this->videoFile = videoFile;
 
     if(!videoCapturer.open(videoFile))
     {
         cout << "Make sure you entered a correct and supported video file path" << endl;
-        return;
-    }
-
-    if(!videoCapturer.set(cv::CAP_PROP_FORMAT, 16U))
-    {
-        cout << "Try setting the property cv::CAP_PROP_FORMAT to cv::16U not success!"  << endl;
         return;
     }
 }
@@ -34,7 +31,8 @@ void CaptureThread::run()
     while(!m_abort)
     {
         captureFrame();
-        QThread::msleep(delay);
+        //QThread::msleep(delay);
+        cv::waitKey(delay);
     }
 }
 
@@ -43,7 +41,12 @@ void CaptureThread::captureFrame()
     //QMutexLocker locker(&mutex);
 
     if(videoCapturer.isOpened()){
+
+        cv::Mat capturedFrame;
         videoCapturer.read(capturedFrame);
+
+        if(capturedFrame.empty())
+            return;
 
         /*std::cout << videoCapturer.get(cv::CAP_PROP_FPS) << std::endl;
         std::cout << videoCapturer.get(cv::CAP_PROP_FRAME_COUNT) << std::endl;

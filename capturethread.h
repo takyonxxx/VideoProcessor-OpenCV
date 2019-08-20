@@ -5,7 +5,6 @@
 #include <QMutexLocker>
 #include <QTimer>
 
-Q_DECLARE_METATYPE(cv::Mat);
 class CaptureThread : public QThread
 {
     Q_OBJECT
@@ -21,7 +20,7 @@ protected:
     void run();
 
 signals:
-    void frameCaptured(cv::Mat);
+    void frameCaptured(cv::Mat&);
     void frameCurrent(int);
     void frameTotal(int);
 
@@ -31,8 +30,7 @@ public slots:
 private:
 
     QMutex mutex;
-    cv::VideoCapture videoCapturer;
-    cv::Mat capturedFrame;
+    cv::VideoCapture videoCapturer;    
     std::string videoFile;
     bool m_abort {false};
 };

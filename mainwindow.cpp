@@ -130,7 +130,7 @@ void MainWindow::on_openBtn_clicked()
     }
 }
 
-void MainWindow::processFrame(cv::Mat frame)
+void MainWindow::processFrame(cv::Mat &frame)
 {
     p_end = QDateTime::currentDateTime();
     p_dt = p_start.msecsTo(p_end) / 1000.;
@@ -160,11 +160,13 @@ void MainWindow::processFrame(cv::Mat frame)
         hue_filter->Update(value.H, KF_VAR_MEASUREMENT, p_dt);
         auto filteredHue = static_cast<double>(hue_filter->GetXAbs());        
 
-        QVector<float> glucose;
+        QVector<float> glucose{};
+        glucose.insert(0,0);
+        glucose.insert(1,0);
         calcGlucose(filteredHue, glucose);
-        glucose[1] = static_cast<float>(floor(glucose[1]*100) / 100);
+        glucose.insert(1, static_cast<float>(floor(glucose[1]*100) / 100));
 
-        QString rgbText = "Glucose: " + QString::number(static_cast<double>(glucose[1]), 'f', 1) + " mg/dL"
+        QString rgbText = "Glucose: " + QString::number(static_cast<double>(glucose.at(1)), 'f', 1) + " mg/dL"
                         + "\nH: " + QString::number(filteredHue, 'f', 1)
                         + "\nR: " + QString::number(filteredRed, 'f', 1)
                         + "\nRemaining: " + QString::number(totalFrame - currentFrame) + " / " + QString::number(totalFrame)
@@ -231,58 +233,56 @@ float MainWindow::calcGradient(float h1, float h2, float g1, float g2, float hue
 }
 void MainWindow::calcGlucose(float h, QVector<float> &g_vector)
 {
-    g_vector[0] = 0;
-    g_vector[1] = 0;
-
     if (h >= 50 && h <= 60)
     {
-        g_vector[0] = 0;
+        g_vector.insert(0, 0);
     }
     else if (h > 60 && h <= 66)
     {
-        g_vector[0] = 30;
-        g_vector[1] = calcGradient(60,66,0,30,h);
+        g_vector.insert(0, 30);
+        g_vector.insert(1,calcGradient(60,66,0,30,h));
     }
     else if (h > 66 && h <= 70)
     {
-        g_vector[0] = 80;
-        g_vector[1] = calcGradient(66,70,30,80,h);
+        g_vector.insert(0, 80);
+        g_vector.insert(1,calcGradient(66,70,30,80,h));
     }
     else if (h > 70 && h < 79)
     {
-        g_vector[0] = 120;
-        g_vector[1] = calcGradient(70,79,80,120,h);
+        g_vector.insert(0,120);
+        g_vector.insert(1,calcGradient(70,79,80,120,h));
     }
     else if (h >= 79 && h <= 83)
     {
-        g_vector[0] = 160;
-        g_vector[1] = calcGradient(79,83,120,160,h);
+        g_vector.insert(0, 160);
+        g_vector.insert(1,calcGradient(79,83,120,160,h));
     }
     else if (h > 83 && h < 88)
     {
-        g_vector[0] = 230;
-        g_vector[1] = calcGradient(83,88,160,230,h);
+        g_vector.insert(0, 230);
+        g_vector.insert(1,calcGradient(83,88,160,230,h));
     }
     else if (h >= 88 && h <= 93)
     {
-        g_vector[0] = 300;
-        g_vector[1] = calcGradient(88,93,230,300,h);
+        g_vector.insert(0, 300);
+        g_vector.insert(1,calcGradient(88,93,230,300,h));
     }
     else if (h > 93 && h < 152)
     {
-        g_vector[0] = 375;
-        g_vector[1] = calcGradient(93,152,300,375,h);
+        g_vector.insert(0, 375);
+        g_vector.insert(1,calcGradient(93,152,300,375,h));
     }
     else if (h >= 152 && h <= 156)
     {
-        g_vector[0] = 450;
-        g_vector[1] = calcGradient(152,156,375,450,h);
+        g_vector.insert(0, 450);
+        g_vector.insert(1,calcGradient(152,156,375,450,h));
     }
     else if (h >= 157 && h <= 180)
     {
-        g_vector[0] = 500;
-        g_vector[1] = 0;
+       g_vector.insert(0, 500);
+       g_vector.insert(1, 0);
     }
+
 }
 
 QString MainWindow::GetMatDepth(const cv::Mat& mat)
