@@ -5,7 +5,7 @@
 #include <QMutexLocker>
 #include <QTimer>
 
-
+Q_DECLARE_METATYPE(cv::Mat);
 class CaptureThread : public QThread
 {
     Q_OBJECT

@@ -22,5 +22,4 @@ HEADERS += \
 FORMS += \
         mainwindow.ui
 
-win32: LIBS += -L$$(OPENCV_DIR)/build/x64/vc15/lib/ -lopencv_world411
-INCLUDEPATH += $$(OPENCV_DIR)/build/include
+include($$PWD/opencv.pri)

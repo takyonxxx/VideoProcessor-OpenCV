@@ -1,5 +1,5 @@
 #include "capturethread.h"
-Q_DECLARE_METATYPE(cv::Mat);
+
 using namespace std;
 
 CaptureThread::CaptureThread(QObject* parent, std::string videoFile)
