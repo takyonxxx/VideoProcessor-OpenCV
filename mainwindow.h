@@ -50,7 +50,6 @@ private:
     QTimer* tmrTimer;
 
     CaptureThread* cpThread;
-    KalmanFilter *red_filter;
     KalmanFilter *hue_filter;
 
     qreal p_dt;

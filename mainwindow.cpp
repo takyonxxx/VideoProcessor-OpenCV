@@ -73,10 +73,8 @@ void MainWindow::on_startBtn_pressed()
 
         testFile.release();
 
-        red_filter = new KalmanFilter(KF_VAR_ACCEL);
-        red_filter->Reset(0);
-        hue_filter = new KalmanFilter(KF_VAR_ACCEL);
-        hue_filter->Reset(0);
+        /*hue_filter = new KalmanFilter(KF_VAR_ACCEL);
+        hue_filter->Reset(0);*/
 
         p_start = QDateTime::currentDateTime();
 
@@ -99,8 +97,6 @@ void MainWindow::on_startBtn_pressed()
             cpThread->wait();
         }
 
-        if(red_filter)
-            delete red_filter;
         if(hue_filter)
             delete hue_filter;
 
@@ -151,26 +147,26 @@ void MainWindow::processFrame(cv::Mat &frame)
         g = pixel[1];
         r = pixel[2];
 
-        red_filter->Update(r, KF_VAR_MEASUREMENT, p_dt);
-        auto filteredRed = static_cast<double>(red_filter->GetXAbs());
-
-        RGB data = RGB(static_cast<int>(filteredRed), g, b);
+        RGB data = RGB(r, g, b);
         HSV value = RGBToHSV(data);       
 
-        hue_filter->Update(value.H, KF_VAR_MEASUREMENT, p_dt);
-        auto filteredHue = static_cast<double>(hue_filter->GetXAbs());        
+        /*hue_filter->Update(value.H, KF_VAR_MEASUREMENT, p_dt);
+        auto filteredHue = static_cast<double>(hue_filter->GetXAbs());  */
 
         QVector<float> glucose{};
         glucose.insert(0,0);
         glucose.insert(1,0);
-        calcGlucose(filteredHue, glucose);
+        calcGlucose(value.H, glucose);
         glucose.insert(1, static_cast<float>(floor(glucose[1]*100) / 100));
 
-        QString rgbText = "Glucose: " + QString::number(static_cast<double>(glucose.at(1)), 'f', 1) + " mg/dL"
-                        + "\nH: " + QString::number(filteredHue, 'f', 1)
-                        + "\nR: " + QString::number(filteredRed, 'f', 1)
+        QString rgbText = "HSV: "   + QString::number(value.H, 'f', 0) + " - "
+                                      + QString::number(value.S, 'f', 0) + " - "
+                                      + QString::number(value.V, 'f', 0)
+                        + "\nR: " + QString::number(r, 'f', 0)
+                        + "\nG: " + QString::number(g, 'f', 0)
+                        + "\nB: " + QString::number(b, 'f', 0)
                         + "\nRemaining: " + QString::number(totalFrame - currentFrame) + " / " + QString::number(totalFrame)
-                        + "\nFrame Type: " + GetMatType(frame);
+                        + "\nGlucose: " + QString::number(static_cast<double>(glucose.at(1)), 'f', 1) + " mg/dL";
 
         ui->textBrowser->setText(rgbText);
         ui->graphicsView->fitInView(&pixmap, Qt::KeepAspectRatio);
