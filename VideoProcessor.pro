@@ -24,11 +24,15 @@ HEADERS += \
 FORMS += \
         mainwindow.ui
 
-#include($$PWD/opencv.pri)
+android{
+include($$PWD/opencv.pri)
+}
 
+win32{
 LIBS += -L$$(OPENCV_DIR)/opencv-4.1.1/x64/vc15/lib/ -lopencv_world411
 LIBS += -L$$(OPENCV_DIR)/opencv-4.1.1/x64/vc15/lib/ -lopencv_world411d
 INCLUDEPATH += $$(OPENCV_DIR)/opencv-4.1.1/include
+}
 
 
 # Default rules for deployment.
